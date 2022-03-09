@@ -6,8 +6,9 @@
   "dependencies": {
     "@babel/core": "^7.16.0",
     "@babel/plugin-proposal-private-property-in-object": "^7.16.7",
-    "@mui/icons-material": "^5.4.2",
+    "@mui/icons-material": "^5.5.0",
     "@mui/material": "^5.4.2",
+    "@mui/styled-engine": "npm:@mui/styled-engine-sc@latest",
     "@mui/styled-engine-sc": "^5.4.2",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.3",
     "@svgr/webpack": "^5.5.0",
@@ -179,5 +180,8 @@
     "redux-logger": "^3.0.6",
     "typescript": "^4.6.2",
     "vscode": "^1.1.37"
+  },
+  "resolutions": {
+    "@mui/styled-engine": "npm:@mui/styled-engine-sc@latest"
   }
 }
