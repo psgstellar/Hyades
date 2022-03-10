@@ -17,7 +17,8 @@ public class DBConnectionTest {
     @Test
     public void DBConnectionTest() throws Exception{
         try (Connection con = dataSource.getConnection()){
-            System.out.println(con);
+            System.out.println(con.getMetaData().getURL());
+            System.out.println(con.getMetaData().getUserName());
         } catch (Exception e){
             e.printStackTrace();
             Assertions.fail();
