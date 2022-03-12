@@ -22,7 +22,7 @@ public class TechStackServiceImpl implements TechStackService {
 
     @Override
     public Optional<TechStack> findById(Long techStackId) {
-        return Optional.of(techStackRepository.findById(techStackId));
+        return Optional.ofNullable(techStackRepository.findById(techStackId));
     }
 
     @Override
