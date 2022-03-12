@@ -1,7 +1,7 @@
 package com.hyades.service;
 
 import com.hyades.domain.entity.TechStack;
-import com.hyades.mapper.TechStackMapper;
+import com.hyades.mapper.TechStackRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
@@ -13,22 +13,27 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class TechStackServiceImpl implements TechStackService {
 
-    private final TechStackMapper techStackMapper;
+    private final TechStackRepository techStackRepository;
 
     @Override
-    public Optional<TechStack> findById(Long techStackId) {
-        return Optional.of(techStackMapper.findById(techStackId));
+    public List<TechStack> findAll() {
+        return techStackRepository.findAll();
     }
 
     @Override
-    public List<TechStack> findMemberStacks(Long memberId) {
-        return techStackMapper.findMemberStacks(memberId);
+    public Optional<TechStack> findById(Long techStackId) {
+        return Optional.of(techStackRepository.findById(techStackId));
+    }
+
+    @Override
+    public Optional<TechStack> findByTechName(String techName) {
+        return Optional.ofNullable(techStackRepository.findByTechName(techName));
     }
 
     @Override
     public int saveTechStackList(List<TechStack> techStackList) throws DuplicateKeyException {
         try {
-            return techStackMapper.insertTechStackList(techStackList);
+            return techStackRepository.insertTechStackList(techStackList);
         } catch (DuplicateKeyException e){
             e.printStackTrace();
         }
@@ -37,11 +42,11 @@ public class TechStackServiceImpl implements TechStackService {
 
     @Override
     public int updateTechStackList(List<TechStack> techStackList) {
-        return techStackMapper.updateTechStackList(techStackList);
+        return techStackRepository.updateTechStackList(techStackList);
     }
 
     @Override
     public int removeTechStackList(List<TechStack> techStackList) {
-        return techStackMapper.deleteTechStackList(techStackList);
+        return techStackRepository.deleteTechStackList(techStackList);
     }
 }

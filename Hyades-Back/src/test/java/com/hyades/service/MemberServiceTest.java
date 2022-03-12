@@ -1,7 +1,7 @@
 package com.hyades.service;
 
 import com.hyades.domain.entity.Member;
-import com.hyades.mapper.MemberMapper;
+import com.hyades.mapper.MemberRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,15 +19,15 @@ import static org.junit.jupiter.api.Assertions.*;
 class MemberServiceTest {
 
     @Autowired
-    MemberMapper memberMapper;
+    MemberRepository memberRepository;
 
     @Test
     public void 전체_회원_검색() throws Exception {
 
         // when
-        List<Member> allMembers = memberMapper.findAll();
-        for (Member allMember : allMembers) {
-            System.out.println("allMember.getEmail() = " + allMember.getId());
+        List<Member> allMembers = memberRepository.findAll();
+        for (Member member : allMembers) {
+            System.out.println("member.memberId = " + member.getMemberId());
         }
 
         // then
@@ -38,7 +38,7 @@ class MemberServiceTest {
     public void 없는_회원_검색() throws Exception {
 
         // when
-        Member findMember = memberMapper.findByEmail("asd@email.com");
+        Member findMember = memberRepository.findByEmail("asd@email.com");
 
         // then
         assertThat(ObjectUtils.isEmpty(findMember)).isEqualTo(true);
@@ -55,8 +55,8 @@ class MemberServiceTest {
                 .build();
 
         // when
-        int saveNum = memberMapper.insertMember(member);
-        Member findMember = memberMapper.findByEmail(member.getEmail());
+        int saveNum = memberRepository.save(member);
+        Member findMember = memberRepository.findByEmail(member.getEmail());
 
         // then
         assertThat(saveNum).isEqualTo(1);
@@ -81,12 +81,12 @@ class MemberServiceTest {
                 .build();
 
         // when
-        memberMapper.insertMember(member1);
+        memberRepository.save(member1);
 
         // then
         //memberMapper.insertMember(member2);
         assertThrows(DuplicateKeyException.class, () -> {
-            memberMapper.insertMember(member2);
+            memberRepository.save(member2);
         });
     }
 }

@@ -6,9 +6,13 @@ INSERT INTO member(email, nickname, profile_img) VALUES ('member4@email.com', 'm
 INSERT INTO member(email, nickname, profile_img) VALUES ('member5@email.com', 'member5_nickname', 'member5_profile_img');
 
 -- tech_stack
-INSERT INTO tech_stack(member_id, tech_name) VALUES (1, 'java'), (1, 'spring'), (1, 'C'), (1, 'C++');
-INSERT INTO tech_stack(member_id, tech_name) VALUES (2, 'java'), (2, 'spring'), (2, 'python');
-INSERT INTO tech_stack(member_id, tech_name) VALUES (3, 'java'), (3, 'spring'), (3, 'C#'), (3, 'mybatis'), (3, "jpa");
+INSERT INTO tech_stack(tech_name) VALUES ('java'), ('python'), ('c'), ('c++'), ('spring'), ('django'), ('mybatis'), ('jpa'), ('html'), ('css'), ('javascript'), ('react'), ('vue.js');
+
+INSERT INTO member_tech_stack VALUES (1, 1), (1, 2), (1, 5), (1, 7), (2, 1), (2, 5), (2, 8), (3, 2), (3,6);
+
+-- INSERT INTO tech_stack(member_id, tech_name) VALUES (1, 'java'), (1, 'spring'), (1, 'C'), (1, 'C++');
+-- INSERT INTO tech_stack(member_id, tech_name) VALUES (2, 'java'), (2, 'spring'), (2, 'python');
+-- INSERT INTO tech_stack(member_id, tech_name) VALUES (3, 'java'), (3, 'spring'), (3, 'C#'), (3, 'mybatis'), (3, "jpa");
 -- INSERT INTO tech_stack(member_id, tech_name) VALUES (1, 'java'); -- unique error
 
 -- project

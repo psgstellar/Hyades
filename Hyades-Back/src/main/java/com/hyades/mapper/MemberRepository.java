@@ -8,7 +8,7 @@ import java.util.List;
 
 @Mapper
 @Repository
-public interface MemberMapper {
+public interface MemberRepository {
 
     List<Member> findAll();
 
@@ -16,6 +16,6 @@ public interface MemberMapper {
 
     Member findByEmail(String email);
 
-    int insertMember(Member member);
+    int save(Member member);
 
 }

@@ -1,7 +1,7 @@
 package com.hyades.service;
 
 import com.hyades.domain.entity.Member;
-import com.hyades.mapper.MemberMapper;
+import com.hyades.mapper.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
@@ -13,27 +13,27 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService {
 
-    private final MemberMapper memberMapper;
+    private final MemberRepository memberRepository;
 
     @Override
     public List<Member> findAll() {
-        return memberMapper.findAll();
+        return memberRepository.findAll();
     }
 
     @Override
     public Optional<Member> findById(Long id) {
-        return Optional.of(memberMapper.findById(id));
+        return Optional.ofNullable(memberRepository.findById(id));
     }
 
     @Override
     public Optional<Member> findByEmail(String email) {
-        return Optional.of(memberMapper.findByEmail(email));
+        return Optional.ofNullable(memberRepository.findByEmail(email));
     }
 
     @Override
     public int saveMember(Member member) {
         try {
-            return memberMapper.insertMember(member);
+            memberRepository.save(member);
         } catch (DuplicateKeyException e){
             e.printStackTrace();
         }

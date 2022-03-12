@@ -8,11 +8,13 @@ import java.util.List;
 
 @Mapper
 @Repository
-public interface TechStackMapper {
+public interface TechStackRepository {
+
+    List<TechStack> findAll();
 
     TechStack findById(Long techStackId);
 
-    List<TechStack> findMemberStacks(Long memberId);
+    TechStack findByTechName(String techName);
 
     int insertTechStackList(List<TechStack> techStackList);
 

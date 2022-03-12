@@ -1,10 +1,11 @@
 package com.hyades.service;
 
 import com.hyades.domain.entity.TechStack;
-import com.hyades.mapper.TechStackMapper;
+import com.hyades.mapper.TechStackRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
@@ -18,43 +19,42 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @Transactional
 class TechStackServiceTest {
-    
+
     @Autowired
-    TechStackMapper techStackMapper;
+    TechStackRepository techStackRepository;
 
     @Test
-    public void 회원기술스텍_조회() throws Exception {
-        // given
-        Long memberId = 1L;
+    public void 전체_기술스텍_조회() throws Exception {
 
         // when
-        List<TechStack> findMemberStacks = techStackMapper.findMemberStacks(memberId);
+        List<TechStack> allTechStacks = techStackRepository.findAll();
 
         // then
-        assertThat(findMemberStacks.size()).isEqualTo(4);
+        assertThat(allTechStacks.size()).isEqualTo(13);
     }
-    
+
     @Test
     public void 기술스텍_저장() throws Exception {
         // given
         TechStack techStack1 = TechStack.builder()
-                .memberId(1L)
-                .techName("react")
+                .techName("node.js")
                 .build();
 
         TechStack techStack2 = TechStack.builder()
-                .memberId(1L)
-                .techName("vue.js")
+                .techName("typescript")
                 .build();
-        
+
         List<TechStack> techStackList = new ArrayList<>();
         techStackList.add(techStack1);
         techStackList.add(techStack2);
-        
+
         // when
-        int saveNum = techStackMapper.insertTechStackList(techStackList);
+        int saveNum = techStackRepository.insertTechStackList(techStackList);
 
         // then
+        for (TechStack techStack : techStackList) {
+            System.out.println("techStack.getTechStackId() = " + techStack.getTechStackId());
+        }
         assertThat(saveNum).isEqualTo(2);
     }
 
@@ -62,13 +62,11 @@ class TechStackServiceTest {
     public void 기술스텍_중복_오류() throws Exception {
         // given
         TechStack techStack1 = TechStack.builder()
-                .memberId(1L)
-                .techName("react")
+                .techName("node.js")
                 .build();
 
         TechStack techStack2 = TechStack.builder()
-                .memberId(1L)
-                .techName("react")
+                .techName("node.js")
                 .build();
 
         List<TechStack> techStackList = new ArrayList<>();
@@ -77,7 +75,7 @@ class TechStackServiceTest {
 
         // then
         assertThrows(DuplicateKeyException.class, () -> {
-            techStackMapper.insertTechStackList(techStackList);
+            techStackRepository.insertTechStackList(techStackList);
         });
     }
 
@@ -85,39 +83,55 @@ class TechStackServiceTest {
     public void 기술스텍_삭제() throws Exception {
         // given
         List<TechStack> techStacks = new ArrayList<>();
-        TechStack findTechStack1 = techStackMapper.findById(1L);
-        TechStack findTechStack2 = techStackMapper.findById(2L);
+        TechStack findTechStack1 = techStackRepository.findById(3L); // "c"
+        TechStack findTechStack2 = techStackRepository.findById(4L); // "c++"
         techStacks.add(findTechStack1);
         techStacks.add(findTechStack2);
 
         // when
-        int deleteNum = techStackMapper.deleteTechStackList(techStacks);
+        int deleteNum = techStackRepository.deleteTechStackList(techStacks);
 
         // then
         assertThat(deleteNum).isEqualTo(techStacks.size());
-        assertThat(ObjectUtils.isEmpty(techStackMapper.findById(1L))).isEqualTo(true);
+        assertThat(ObjectUtils.isEmpty(techStackRepository.findById(3L))).isEqualTo(true);
+        assertThat(ObjectUtils.isEmpty(techStackRepository.findById(4L))).isEqualTo(true);
+    }
+
+    @Test
+    public void 사용중인_기술스텍_삭제_오류() throws Exception {
+        // given
+        List<TechStack> techStacks = new ArrayList<>();
+        TechStack findTechStack1 = techStackRepository.findById(1L); // "java"
+        techStacks.add(findTechStack1);
+
+        // when
+        // then
+        assertThrows(DataIntegrityViolationException.class, () -> {
+            techStackRepository.deleteTechStackList(techStacks);
+        });
     }
 
     @Test
     public void 기술스텍_수정() throws Exception {
         // given
-        List<TechStack> memberTechStacks = techStackMapper.findMemberStacks(1L);
-        List<String> memberStacknames = new ArrayList<>();
-        for (TechStack memberTechStack : memberTechStacks) {
-            memberStacknames.add(memberTechStack.getTechName());
-        }
+        List<TechStack> findTechStacks = new ArrayList<>();
+        findTechStacks.add(techStackRepository.findByTechName("java"));
+        findTechStacks.add(techStackRepository.findByTechName("python"));
 
         // when
-        for (TechStack memberTechStack : memberTechStacks) {
-            memberTechStack.setTechName(memberTechStack.getTechName() + " update");
+        List<TechStack> updateTechStacks = new ArrayList<>();
+        for (TechStack findTechStack : findTechStacks) {
+            updateTechStacks.add(TechStack.builder()
+                    .techStackId(findTechStack.getTechStackId())
+                    .techName(findTechStack.getTechName() + "_update") // java_update, python_update
+                    .build());
         }
-        techStackMapper.updateTechStackList(memberTechStacks);
-        List<TechStack> memberTechStacks2 = techStackMapper.findMemberStacks(1L);
+        techStackRepository.updateTechStackList(updateTechStacks);
 
         // then
-        for (int i = 0; i<memberTechStacks2.size(); i++){
-            assertThat(memberTechStacks2.get(i).getTechName()).isNotEqualTo(memberStacknames.get(i));
-            System.out.println("i = " + i + " " + memberTechStacks2.get(i).getTechName() + "" + memberStacknames.get(i));
-        }
+        assertThat(techStackRepository.findById(findTechStacks.get(0).getTechStackId()).getTechName())
+                .isEqualTo("java_update"); // findTechStacks(0) <- before update : techStackName = java
+        assertThat(techStackRepository.findById(findTechStacks.get(1).getTechStackId()).getTechName())
+                .isEqualTo("python_update"); // findTechStacks(1) <- before update : techStackName = python
     }
 }

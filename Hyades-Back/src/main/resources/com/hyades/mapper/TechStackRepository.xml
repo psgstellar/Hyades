@@ -2,21 +2,24 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
-<mapper namespace="com.hyades.mapper.TechStackMapper">
+<mapper namespace="com.hyades.mapper.TechStackRepository">
     <!-- 쿼리 작성 -->
+    <select id="findAll" resultMap="techStackResultMapper">
+        select * from tech_stack;
+    </select>
 
     <select id="findById" parameterType="java.lang.Long" resultMap="techStackResultMapper">
         select * from tech_stack where tech_stack_id = #{techStackId};
     </select>
 
-    <select id="findMemberStacks" parameterType="java.lang.Long" resultMap="techStackResultMapper">
-        select * from tech_stack where member_id = #{memberId};
+    <select id="findByTechName" parameterType="java.lang.String" resultMap="techStackResultMapper">
+        select * from tech_stack where tech_name = #{techName};
     </select>
 
     <insert id="insertTechStackList" parameterType="java.util.List">
-        insert into tech_stack (member_id, tech_name) values
+        insert into tech_stack (tech_name) values
         <foreach collection="list" item="techStack" separator=",">
-            (#{techStack.memberId}, #{techStack.techName})
+            (#{techStack.techName})
         </foreach>
     </insert>
 
@@ -24,20 +27,19 @@
         <foreach collection="list" item="techStack" index="index" separator=";">
             update tech_stack
             set tech_name = #{techStack.techName}
-            where tech_stack_id = #{techStack.id}
+            where tech_stack_id = #{techStack.techStackId}
         </foreach>
     </update>
 
     <delete id="deleteTechStackList" parameterType="java.util.List">
         delete from tech_stack where
         <foreach collection="list" item="techStack" index="i" separator="or">
-            tech_stack_id = #{techStack.id}
+            tech_stack_id = #{techStack.techStackId}
         </foreach>
     </delete>
 
     <resultMap id="techStackResultMapper" type="com.hyades.domain.entity.TechStack">
-        <id column="tech_stack_id" property="id"/>
-        <result column="member_id" property="memberId"/>
+        <id column="tech_stack_id" property="techStackId"/>
         <result column="tech_name" property="techName"/>
     </resultMap>
 </mapper>

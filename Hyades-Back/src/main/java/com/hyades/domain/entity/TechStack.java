@@ -2,14 +2,13 @@ package com.hyades.domain.entity;
 
 import lombok.*;
 
-@Getter @Setter
+@Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class TechStack {
 
-    private Long id;
-    private Long memberId;
+    private Long techStackId;
     private String techName;
 
 }

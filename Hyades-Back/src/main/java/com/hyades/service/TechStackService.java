@@ -8,9 +8,11 @@ import java.util.Optional;
 
 public interface TechStackService {
 
+    List<TechStack> findAll();
+
     Optional<TechStack> findById(Long techStackId);
 
-    List<TechStack> findMemberStacks(Long memberId);
+    Optional<TechStack> findByTechName(String techName);
 
     int saveTechStackList(List<TechStack> techStackList) throws DuplicateKeyException;
 
